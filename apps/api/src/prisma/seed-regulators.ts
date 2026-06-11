@@ -1,0 +1,831 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+const regulators = [
+  {
+    name: 'National Council of State Boards of Nursing (NCSBN)',
+    slug: 'ncsbn',
+    country: 'USA',
+    region: null,
+    logo: '/images/regulators/ncsbn.svg',
+    website: 'https://www.ncsbn.org',
+    description: 'NCSBN is an independent, not-for-profit organization that serves as a vehicle for collaboratively advancing nursing regulation for the public welfare.',
+    contactEmail: 'contact@ncsbn.org',
+    phone: '+1-312-525-3600',
+    address: '111 East Wacker Drive, Suite 2800, Chicago, IL 60601',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Nursing Board of California',
+    slug: 'nursing-board-ca',
+    country: 'USA',
+    region: 'California',
+    logo: '/images/regulators/california.svg',
+    website: 'https://www.rn.ca.gov',
+    description: 'The California Board of Registered Nursing protects the health, safety, and welfare of the public by ensuring the provision of quality nursing care.',
+    contactEmail: 'rn@dcr.ca.gov',
+    phone: '+1-916-322-3350',
+    address: '1747 N. Market Blvd., Suite 150, Sacramento, CA 95834',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'New York State Board for Nursing',
+    slug: 'nys-bon',
+    country: 'USA',
+    region: 'New York',
+    logo: '/images/regulators/ny.svg',
+    website: 'https://www.op.nysed.gov/professions/nursing',
+    description: 'The New York State Board for Nursing protects the public from unsafe and unprofessional nursing practices.',
+    contactEmail: 'nursebd@nysed.gov',
+    phone: '+1-518-474-3817',
+    address: '89 Washington Avenue, Albany, NY 12234',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Texas Board of Nursing',
+    slug: 'texas-bon',
+    country: 'USA',
+    region: 'Texas',
+    logo: '/images/regulators/texas.svg',
+    website: 'https://www.bon.texas.gov',
+    description: 'The Texas Board of Nursing protects and promotes the welfare of the people of Texas by ensuring that each licensed nurse provides safe, competent nursing care.',
+    contactEmail: 'bob@bnllc.org',
+    phone: '+1-512-305-7400',
+    address: '333 Guadalupe Street, Suite 3-460, Austin, TX 78701',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Nursing and Midwifery Council (NMC)',
+    slug: 'nmc-uk',
+    country: 'UK',
+    region: null,
+    logo: '/images/regulators/nmc.svg',
+    website: 'https://www.nmc.org.uk',
+    description: 'The NMC is the regulator for nursing and midwifery professions in the UK, maintaining the register and setting standards for education and practice.',
+    contactEmail: 'fees@nmc.org.uk',
+    phone: '+44-20-7333-9333',
+    address: '23 Portland Place, London W1B 1PZ',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Australian Health Practitioner Regulation Agency (AHPRA)',
+    slug: 'ahpra',
+    country: 'Australia',
+    region: null,
+    logo: '/images/regulators/ahpra.svg',
+    website: 'https://www.ahpra.gov.au',
+    description: 'AHPRA works with 15 National Health Practitioner Boards to protect the public and regulate health practitioners in Australia.',
+    contactEmail: 'enquiries@ahpra.gov.au',
+    phone: '+61-1300-419-495',
+    address: 'GPO Box 9958, Melbourne VIC 3001',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'College and Association of Registered Nurses of Alberta (CARNA)',
+    slug: 'carna',
+    country: 'Canada',
+    region: 'Alberta',
+    logo: '/images/regulators/carna.svg',
+    website: 'https://www.nurses.ab.ca',
+    description: 'CARNA is the professional regulatory body for registered nurses in Alberta, protecting the public and supporting the profession.',
+    contactEmail: 'practice@nurses.ab.ca',
+    phone: '+1-800-252-9392',
+    address: '11620 168 Street, Edmonton, AB T5M 4B6',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'British Columbia College of Nurses and Midwives (BCCNM)',
+    slug: 'bccnm',
+    country: 'Canada',
+    region: 'British Columbia',
+    logo: '/images/regulators/bccnm.svg',
+    website: 'https://www.bccnm.ca',
+    description: 'BCCNM is the regulatory body for nurses and midwives in British Columbia, protecting the public through safe, competent, ethical nursing practice.',
+    contactEmail: 'registrations@bccnm.ca',
+    phone: '+1-604-742-6200',
+    address: '200-865 Hornby Street, Vancouver, BC V6Z 2G3',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'College of Nurses of Ontario (CNO)',
+    slug: 'cno',
+    country: 'Canada',
+    region: 'Ontario',
+    logo: '/images/regulators/cno.svg',
+    website: 'https://www.cno.org',
+    description: 'The College of Nurses of Ontario is the governing body for registered nurses, registered practical nurses, and nurse practitioners in Ontario.',
+    contactEmail: 'questions@cno.org',
+    phone: '+1-416-928-0900',
+    address: '101 Davenport Road, Toronto, ON M5V 2V1',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Nursing and Midwifery Board of Ireland (NMBI)',
+    slug: 'nmbi',
+    country: 'Ireland',
+    region: null,
+    logo: '/images/regulators/nmbi.svg',
+    website: 'https://www.nmbi.ie',
+    description: 'NMBI is the regulatory body for nurses and midwives in Ireland, maintaining the register and setting standards for education and practice.',
+    contactEmail: 'registration@nmbi.ie',
+    phone: '+353-1-639-8500',
+    address: '18-20 Carysfort Avenue, Blackrock, Co. Dublin A94 V2Y3',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Dubai Health Authority (DHA)',
+    slug: 'dha',
+    country: 'UAE',
+    region: 'Dubai',
+    logo: '/images/regulators/dha.svg',
+    website: 'https://www.dha.gov.ae',
+    description: 'DHA regulates healthcare services in Dubai and ensures the highest standards of medical care and nursing practice.',
+    contactEmail: 'dha@dha.gov.ae',
+    phone: '+971-4-319-1111',
+    address: 'Doha Street, Dubai Healthcare City, Dubai',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Saudi Commission for Health Specialties (SCFHS)',
+    slug: 'scfhs',
+    country: 'Saudi Arabia',
+    region: null,
+    logo: '/images/regulators/scfhs.svg',
+    website: 'https://www.scfhs.org.sa',
+    description: 'SCFHS is the regulatory body for health practitioners in Saudi Arabia, including nurses, ensuring competency and professional standards.',
+    contactEmail: 'info@scfhs.org.sa',
+    phone: '+966-11-212-5555',
+    address: 'Al-Madinah Al-Munawarah Road, Riyadh 11564',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Pflegekammer Nord (PIN)',
+    slug: 'pin-germany',
+    country: 'Germany',
+    region: null,
+    logo: '/images/regulators/pin.svg',
+    website: 'https://www.pflegekammer-nord.de',
+    description: 'The German Nursing Chamber (PIN) represents and regulates the nursing profession in Germany, promoting professional standards.',
+    contactEmail: 'info@pflegekammer-nord.de',
+    phone: '+49-40-4665-2220',
+    address: 'Königstraße 56, 22769 Hamburg',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Singapore Nursing Board (SNB)',
+    slug: 'snb',
+    country: 'Singapore',
+    region: null,
+    logo: '/images/regulators/snb.svg',
+    website: 'https://www.snb.gov.sg',
+    description: 'SNB is the regulatory authority for nurses and midwives in Singapore, maintaining professional standards and registration.',
+    contactEmail: 'enquiries@health.gov.sg',
+    phone: '+65-6325-9111',
+    address: '16 College Road, Singapore 169854',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Professional Regulation Commission (PRC)',
+    slug: 'prc-philippines',
+    country: 'Philippines',
+    region: null,
+    logo: '/images/regulators/prc.svg',
+    website: 'https://www.prc.gov.ph',
+    description: 'PRC is the government agency responsible for the licensure and regulation of nursing professionals in the Philippines.',
+    contactEmail: 'op@prc.gov.ph',
+    phone: '+63-2-531-7511',
+    address: 'P. Paredes Street, Sampaloc, Manila 1008',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Indian Nursing Council (INC)',
+    slug: 'inc-india',
+    country: 'India',
+    region: null,
+    logo: '/images/regulators/inc.svg',
+    website: 'https://www.indiannursingcouncil.org',
+    description: 'INC is the regulatory body for nursing education and practice in India, maintaining standards for nursing professionals.',
+    contactEmail: 'secy.inc@gov.in',
+    phone: '+91-11-2301-8069',
+    address: 'Sector - 9, Dwarka, New Delhi 110075',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'Nursing Council of Kenya (NCK)',
+    slug: 'nck-kenya',
+    country: 'Kenya',
+    region: null,
+    logo: '/images/regulators/nck.svg',
+    website: 'https://www.nckenya.com',
+    description: 'NCK is the regulatory body for nursing and midwifery professionals in Kenya, ensuring quality healthcare delivery.',
+    contactEmail: 'info@nckenya.com',
+    phone: '+254-20-272-9780',
+    address: 'Kabarnet Road, Nairobi, Kenya',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+  {
+    name: 'South African Nursing Council (SANC)',
+    slug: 'sanc',
+    country: 'South Africa',
+    region: null,
+    logo: '/images/regulators/sanc.svg',
+    website: 'https://www.sanc.co.za',
+    description: 'SANC is the regulatory body for nursing professionals in South Africa, maintaining standards and ensuring quality nursing care.',
+    contactEmail: 'sanc@sanc.co.za',
+    phone: '+27-12-420-1000',
+    address: '602 Pretorius Street, Pretoria 0001',
+    isVerified: true,
+    verifiedAt: new Date(),
+  },
+];
+
+const licensingPathways = [
+  // USA - NCSBN
+  {
+    regulatorSlug: 'ncsbn',
+    country: 'USA',
+    pathwayType: 'RN',
+    title: 'NCLEX-RN for International Nurses',
+    description: 'Complete licensing pathway for internationally educated nurses to practice as Registered Nurses in the United States.',
+    eligibility: [
+      'Must hold a nursing degree equivalent to US RN education',
+      'Completion of CGFNS credential evaluation',
+      'English language proficiency (IELTS or OET)',
+      'No criminal history',
+    ],
+    steps: [
+      'Submit application to chosen State Board',
+      'Complete CGFNS Credentials Evaluation',
+      'Register for NCLEX-RN examination',
+      'Pass NCLEX-RN examination',
+      'Receive RN license from State Board',
+    ],
+    documents: [
+      'Nursing education transcripts',
+      'CGFNS Credentials Evaluation Report',
+      'IELTS/OET test results',
+      'Passport and identification',
+      'State Board application form',
+    ],
+    fees: [
+      'CGFNS Evaluation: $500-700',
+      'NCLEX Registration: $200',
+      'State Board application: $100-500',
+    ],
+    timeline: '6-12 months',
+    examRequired: true,
+    examName: 'NCLEX-RN',
+    englishRequired: true,
+    englishTests: ['IELTS Academic', 'OET'],
+  },
+  // UK - NMC
+  {
+    regulatorSlug: 'nmc-uk',
+    country: 'UK',
+    pathwayType: 'RN',
+    title: 'NMC Registration for International Nurses',
+    description: 'Pathway for internationally educated nurses to register with the Nursing and Midwifery Council in the UK.',
+    eligibility: [
+      'Completed nursing education program',
+      'Current, active nursing registration in home country',
+      'English language proficiency (IELTS or OET)',
+      'Fit to practice mentally and physically',
+    ],
+    steps: [
+      'Create NMC online account',
+      'Complete eligibility self-assessment',
+      'Submit qualification documents',
+      'Complete IELTS/OET requirement',
+      'Pass Computer-Based Test (CBT)',
+      'Pass Objective Structured Clinical Examination (OSCE)',
+      'Complete registration',
+    ],
+    documents: [
+      'Nursing qualification certificates',
+      'Transcripts from nursing school',
+      'Registration certificate from home country',
+      'IELTS/OET test results',
+      'Passport',
+    ],
+    fees: [
+      'NMC Registration: £153',
+      'CBT: £83',
+      'OSCE: £794',
+    ],
+    timeline: '6-9 months',
+    examRequired: true,
+    examName: 'CBT + OSCE',
+    englishRequired: true,
+    englishTests: ['IELTS Academic', 'OET'],
+  },
+  // Australia - AHPRA
+  {
+    regulatorSlug: 'ahpra',
+    country: 'Australia',
+    pathwayType: 'RN',
+    title: 'AHPRA Nursing Registration for Internationally Qualified Nurses',
+    description: 'Process for internationally educated nurses to obtain registration with AHPRA to practice in Australia.',
+    eligibility: [
+      'Completed nursing education (minimum 3 years)',
+      'Current nursing registration in home country',
+      'English language proficiency',
+      'No conditions on registration',
+    ],
+    steps: [
+      'Submit application to AHPRA',
+      'Provide supporting documents',
+      'Complete English language requirements',
+      'Undergo criminal history check',
+      'Attend interview if required',
+      'Receive registration',
+    ],
+    documents: [
+      'Passport',
+      'Nursing qualification documents',
+      'Registration certificate',
+      'English test results',
+      'Curriculum Vitae',
+    ],
+    fees: [
+      'Application fee: $715',
+      'Registration fee: $175 per year',
+    ],
+    timeline: '3-6 months',
+    examRequired: false,
+    englishRequired: true,
+    englishTests: ['IELTS Academic', 'OET', 'PTE Academic'],
+  },
+  // Canada - BCCNM
+  {
+    regulatorSlug: 'bccnm',
+    country: 'Canada',
+    pathwayType: 'RN',
+    title: 'BCCNM Registration for Internationally Educated Nurses',
+    description: 'Process for internationally educated nurses to become registered with BCCNM to practice in British Columbia.',
+    eligibility: [
+      'Graduated from approved nursing program',
+      'Current nursing registration',
+      'English language proficiency',
+      'Passed NCLEX-RN or equivalent',
+    ],
+    steps: [
+      'Create account with BCCNM',
+      'Submit application and documents',
+      'Complete NCLEX-RN if not already passed',
+      'Complete BCCNP jurisprudence exam',
+      'Submit criminal record check',
+      'Receive registration',
+    ],
+    documents: [
+      'Nursing education documents',
+      'NCLEX-RN results',
+      'IELTS/OET results',
+      'Criminal record check',
+    ],
+    fees: [
+      'Application: $350',
+      'Registration: $375/year',
+    ],
+    timeline: '4-8 months',
+    examRequired: true,
+    examName: 'NCLEX-RN',
+    englishRequired: true,
+    englishTests: ['IELTS', 'OET'],
+  },
+  // Ireland - NMBI
+  {
+    regulatorSlug: 'nmbi',
+    country: 'Ireland',
+    pathwayType: 'RN',
+    title: 'NMBI Registration for Internationally Qualified Nurses',
+    description: 'Process for internationally educated nurses to register with NMBI to practice in Ireland.',
+    eligibility: [
+      'Completed nursing education',
+      'Current registration in home country',
+      'English language proficiency',
+      'Good standing certificate',
+    ],
+    steps: [
+      'Submit online application to NMBI',
+      'Provide all required documents',
+      'Complete English language requirement',
+      'Await decision on eligibility',
+      'Register and pay fee',
+    ],
+    documents: [
+      'Nursing qualification certificates',
+      'Transcripts',
+      'Registration certificate',
+      'IELTS/OET results',
+      'Good standing certificate',
+    ],
+    fees: [
+      'Registration: €100',
+      'Retention: €100/year',
+    ],
+    timeline: '3-6 months',
+    examRequired: false,
+    englishRequired: true,
+    englishTests: ['IELTS Academic', 'OET'],
+  },
+  // UAE - DHA
+  {
+    regulatorSlug: 'dha',
+    country: 'UAE',
+    pathwayType: 'RN',
+    title: 'DHA Nursing License for Internationally Educated Nurses',
+    description: 'Process for obtaining a Dubai Health Authority license to practice nursing in Dubai, UAE.',
+    eligibility: [
+      'Minimum 2-year nursing education',
+      'Current nursing license from home country',
+      'English language proficiency',
+      'Minimum 2 years of clinical experience',
+    ],
+    steps: [
+      'Create DHA account',
+      'Submit online application',
+      'Upload required documents',
+      'Pay application fees',
+      'Pass DHA exam (if required)',
+      'Receive license',
+    ],
+    documents: [
+      'Nursing degree/diploma',
+      'Transcripts',
+      'Current nursing license',
+      'Experience certificates',
+      'Passport copy',
+    ],
+    fees: [
+      'Application: AED 220',
+      'Evaluation: AED 300',
+      'License: AED 1000/year',
+    ],
+    timeline: '2-4 months',
+    examRequired: true,
+    examName: 'DHA Exam',
+    englishRequired: true,
+    englishTests: ['IELTS', 'OET'],
+  },
+  // Saudi Arabia - SCFHS
+  {
+    regulatorSlug: 'scfhs',
+    country: 'Saudi Arabia',
+    pathwayType: 'RN',
+    title: 'SCFHS Nursing License for International Nurses',
+    description: 'Process for obtaining a Saudi Commission for Health Specialties license to practice nursing in Saudi Arabia.',
+    eligibility: [
+      'Nursing degree (3+ years)',
+      'Current nursing license',
+      'English language proficiency',
+      'No criminal record',
+    ],
+    steps: [
+      'Register on SCFHS portal',
+      'Submit application',
+      'Upload documents',
+      'Pay fees',
+      'Pass exam (if required)',
+      'Receive license',
+    ],
+    documents: [
+      'Nursing qualification',
+      'Current license',
+      'Experience letters',
+      'Passport',
+    ],
+    fees: [
+      'Application: SAR 100',
+      'Exam: SAR 200',
+      'License: SAR 200/year',
+    ],
+    timeline: '2-3 months',
+    examRequired: true,
+    examName: 'SCFHS Exam',
+    englishRequired: true,
+    englishTests: ['IELTS'],
+  },
+  // Germany - PIN
+  {
+    regulatorSlug: 'pin-germany',
+    country: 'Germany',
+    pathwayType: 'RN',
+    title: 'German Nursing Recognition for Internationally Educated Nurses',
+    description: 'Process for recognizing foreign nursing qualifications in Germany and obtaining permission to practice.',
+    eligibility: [
+      'Completed nursing education',
+      'Current nursing registration',
+      'B2 German language proficiency',
+      'No professional misconduct',
+    ],
+    steps: [
+      'Submit application to recognition authority',
+      'Document all qualifications',
+      'Complete B2 German language course',
+      'Pass knowledge examination (if required)',
+      'Complete adaptation period (if required)',
+      'Receive recognition',
+    ],
+    documents: [
+      'Nursing diplomas and transcripts',
+      'Curriculum Vitae',
+      'Language certificates',
+      'Registration certificate',
+    ],
+    fees: [
+      'Application: €100-300',
+      'Language course: €2000-4000',
+    ],
+    timeline: '12-18 months',
+    examRequired: true,
+    examName: 'Knowledge Exam + B2 Language',
+    englishRequired: false,
+    englishTests: [],
+  },
+  // Singapore - SNB
+  {
+    regulatorSlug: 'snb',
+    country: 'Singapore',
+    pathwayType: 'RN',
+    title: 'SNB Registration for Internationally Educated Nurses',
+    description: 'Process for internationally educated nurses to register with the Singapore Nursing Board.',
+    eligibility: [
+      'Nursing degree (minimum 3 years)',
+      'Current, valid nursing registration',
+      'English language proficiency',
+      'Minimum 2 years of experience',
+    ],
+    steps: [
+      'Submit application to SNB',
+      'Provide all required documents',
+      'Complete English requirement',
+      'Await assessment',
+      'Receive registration',
+    ],
+    documents: [
+      'Nursing qualification',
+      'Transcripts',
+      'Registration certificate',
+      'IELTS/OET results',
+      'Experience letters',
+    ],
+    fees: [
+      'Application: $100',
+      'Registration: $150/year',
+    ],
+    timeline: '3-6 months',
+    examRequired: false,
+    englishRequired: true,
+    englishTests: ['IELTS', 'OET'],
+  },
+  // Philippines - PRC
+  {
+    regulatorSlug: 'prc-philippines',
+    country: 'Philippines',
+    pathwayType: 'RN',
+    title: 'PRC Nurse Licensure Examination (NLE)',
+    description: 'Process for taking the Philippine Nurse Licensure Examination to become a registered nurse in the Philippines.',
+    eligibility: [
+      'Graduated from BS Nursing (4-year program)',
+      'No criminal record',
+      'Completed all academic requirements',
+    ],
+    steps: [
+      'File application with PRC',
+      'Submit requirements',
+      'Pay examination fee',
+      'Take the licensure exam',
+      'Receive results and license',
+    ],
+    documents: [
+      'Transcript of Records',
+      'Diploma',
+      'Birth Certificate',
+      '2x2 ID photos',
+    ],
+    fees: [
+      'Application: ₱900',
+      'Licensure: ₱600',
+    ],
+    timeline: '3-6 months',
+    examRequired: true,
+    examName: 'Nurse Licensure Examination',
+    englishRequired: false,
+    englishTests: [],
+  },
+];
+
+const announcements = [
+  {
+    regulatorSlug: 'ncsbn',
+    title: 'NCLEX-RN Passing Standard Update 2025',
+    content: 'The NCSBN Board of Directors has approved a new passing standard for the NCLEX-RN examination, effective April 1, 2025. The new standard reflects the current minimum level of knowledge required for safe and effective entry-level nursing practice.',
+    category: 'EXAM',
+    priority: 'HIGH',
+    isPinned: true,
+    isPublished: true,
+    publishedAt: new Date(),
+  },
+  {
+    regulatorSlug: 'ncsbn',
+    title: 'New NCLEX-RN Test Plan Implementation',
+    content: 'A new NCLEX-RN test plan will be implemented on April 1, 2025, introducing updated content areas and question formats. Candidates are encouraged to review the new test plan available on our website.',
+    category: 'EXAM',
+    priority: 'NORMAL',
+    isPinned: false,
+    isPublished: true,
+    publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  },
+  {
+    regulatorSlug: 'nmc-uk',
+    title: 'English Language Requirements Update',
+    content: 'The NMC has updated its English language requirements for overseas applicants. Starting January 2025, all applicants must demonstrate spoken and written English competency through IELTS Academic (7.0 in all bands) or OET (Grade B in all components).',
+    category: 'LICENSING',
+    priority: 'HIGH',
+    isPinned: true,
+    isPublished: true,
+    publishedAt: new Date(),
+  },
+  {
+    regulatorSlug: 'ahpra',
+    title: 'Revised Registration Standards for International Nurses',
+    content: 'AHPRA has introduced revised standards for internationally qualified nurses seeking registration in Australia. Key changes include updated English language requirements and streamlined credentialing processes.',
+    category: 'LICENSING',
+    priority: 'NORMAL',
+    isPinned: false,
+    isPublished: true,
+    publishedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+  },
+];
+
+const faqs = [
+  {
+    regulatorSlug: 'ncsbn',
+    question: 'How do I apply to take the NCLEX-RN exam?',
+    answer: 'To apply for the NCLEX-RN, you must first submit an application to the nursing regulatory body (NRB) in the state/territory where you wish to be licensed. Once the NRB determines you are eligible, they will send an Authorization to Test (ATT) which allows you to schedule your exam with Pearson VUE.',
+    category: 'EXAM',
+  },
+  {
+    regulatorSlug: 'ncsbn',
+    question: 'What is the passing score for NCLEX-RN?',
+    answer: 'The NCLEX-RN uses a computerized adaptive testing (CAT) format and does not have a fixed passing score. The passing standard is set by the NCSBN Board of Directors and is reviewed every three years. The current passing standard is 0.00 logit.',
+    category: 'EXAM',
+  },
+  {
+    regulatorSlug: 'ncsbn',
+    question: 'How many times can I take the NCLEX-RN?',
+    answer: 'Candidates can take the NCLEX-RN up to 8 times per year, with a minimum 45-day waiting period between attempts. However, individual state boards may have additional restrictions.',
+    category: 'EXAM',
+  },
+  {
+    regulatorSlug: 'nmc-uk',
+    question: 'What is the CBT and OSCE examination for UK registration?',
+    answer: 'The CBT (Computer-Based Test) is a knowledge test that can be taken in your home country. The OSCE (Objective Structured Clinical Examination) is a practical clinical skills test that must be taken in the UK after passing the CBT.',
+    category: 'EXAM',
+  },
+  {
+    regulatorSlug: 'nmc-uk',
+    question: 'How long is my NMC registration valid?',
+    answer: 'NMC registration is valid for one year and must be renewed annually. You must complete continuing professional development (CPD) requirements and declare your fitness to practice each year.',
+    category: 'LICENSING',
+  },
+  {
+    regulatorSlug: 'ahpra',
+    question: 'How long does AHPRA registration take for internationally qualified nurses?',
+    answer: 'Processing times vary depending on the completeness of your application and whether you need to provide additional information. On average, it takes 4-12 weeks for complete applications.',
+    category: 'LICENSING',
+  },
+  {
+    regulatorSlug: 'ahpra',
+    question: 'What English tests does AHPRA accept?',
+    answer: 'AHPRA accepts IELTS Academic (overall 7.0, no band less than 7.0), OET (Grade B in all components), PTE Academic (overall 65, no score less than 65), or proof of completion of five years of secondary and/or tertiary education in English.',
+    category: 'LICENSING',
+  },
+];
+
+async function main() {
+  console.log('Seeding regulators...');
+
+  for (const regulator of regulators) {
+    await prisma.regulator.upsert({
+      where: { slug: regulator.slug },
+      update: regulator,
+      create: regulator,
+    });
+  }
+
+  console.log('Seeding licensing pathways...');
+
+  for (const pathway of licensingPathways) {
+    const regulator = await prisma.regulator.findUnique({
+      where: { slug: pathway.regulatorSlug },
+    });
+
+    if (regulator) {
+      const { regulatorSlug, ...pathwayData } = pathway;
+      await prisma.licensingPathway.upsert({
+        where: { id: `${regulator.id}-${pathway.country}-${pathway.pathwayType}` },
+        update: {
+          ...pathwayData,
+          eligibility: JSON.stringify(pathway.eligibility),
+          steps: JSON.stringify(pathway.steps),
+          documents: JSON.stringify(pathway.documents),
+          fees: JSON.stringify(pathway.fees),
+          englishTests: pathway.englishTests ? JSON.stringify(pathway.englishTests) : null,
+          regulatorId: regulator.id,
+        },
+        create: {
+          id: `${regulator.id}-${pathway.country}-${pathway.pathwayType}`,
+          regulatorId: regulator.id,
+          country: pathway.country,
+          pathwayType: pathway.pathwayType,
+          title: pathway.title,
+          description: pathway.description,
+          eligibility: JSON.stringify(pathway.eligibility),
+          steps: JSON.stringify(pathway.steps),
+          documents: JSON.stringify(pathway.documents),
+          fees: JSON.stringify(pathway.fees),
+          timeline: pathway.timeline,
+          examRequired: pathway.examRequired,
+          examName: pathway.examName,
+          englishRequired: pathway.englishRequired,
+          englishTests: pathway.englishTests ? JSON.stringify(pathway.englishTests) : null,
+          isActive: true,
+        },
+      });
+    }
+  }
+
+  console.log('Seeding announcements...');
+
+  for (const announcement of announcements) {
+    const regulator = await prisma.regulator.findUnique({
+      where: { slug: announcement.regulatorSlug },
+    });
+
+    if (regulator) {
+      await prisma.regulatorAnnouncement.create({
+        data: {
+          regulatorId: regulator.id,
+          title: announcement.title,
+          content: announcement.content,
+          category: announcement.category,
+          priority: announcement.priority,
+          isPinned: announcement.isPinned,
+          isPublished: announcement.isPublished,
+          publishedAt: announcement.publishedAt,
+        },
+      });
+    }
+  }
+
+  console.log('Seeding FAQs...');
+
+  for (const faq of faqs) {
+    const regulator = await prisma.regulator.findUnique({
+      where: { slug: faq.regulatorSlug },
+    });
+
+    if (regulator) {
+      await prisma.regulatorFAQ.create({
+        data: {
+          regulatorId: regulator.id,
+          question: faq.question,
+          answer: faq.answer,
+          category: faq.category,
+          isVerified: true,
+          isPublished: true,
+        },
+      });
+    }
+  }
+
+  console.log('Seeding completed!');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

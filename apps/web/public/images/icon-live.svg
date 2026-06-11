@@ -1,0 +1,17 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" rx="24" fill="url(#grad)"/>
+  <circle cx="60" cy="50" r="25" fill="white" opacity="0.9"/>
+  <circle cx="60" cy="50" r="18" fill="#EF4444"/>
+  <path d="M52 45 L62 50 L52 55" fill="white"/>
+  <rect x="35" y="70" width="50" height="8" rx="4" fill="white" opacity="0.6"/>
+  <rect x="35" y="82" width="35" height="6" rx="3" fill="white" opacity="0.4"/>
+  <circle cx="85" cy="30" r="8" fill="#EF4444" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+  </defs>
+</svg>

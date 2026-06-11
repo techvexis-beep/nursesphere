@@ -1,0 +1,869 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  phone         String?
+  role          String    @default("NURSE_STUDENT")
+  avatar        String?
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  clinicalLogs      ClinicalLog[]
+  migrationProgress MigrationProgress?
+  examAttempts      ExamAttempt[]
+  salaryReports     SalaryReport[]
+  advocacyReports   AdvocacyReport[]
+  subscriptions     Subscription[]
+  marketplaceListings MarketplaceListing[]
+  employer          Employer?
+  documents         Document[]
+  notifications     Notification[]
+  aiSessions        AIGuidanceSession[]
+  studyActivities   StudyActivity[]
+  jobApplications   JobApplication[]
+  regulatorUsers    RegulatorUser[]
+  liveQAQuestions   LiveQAQuestion[]
+  regulatorTracking UserRegulatorTracking[]
+  regulatorQuestions RegulatorQuestion[]
+  profile          UserProfile?
+  communityPosts   CommunityPost[]
+  communityComments CommunityComment[]
+  threadAnswers    ThreadAnswer[]
+  postUpvotes      PostUpvote[]
+  answerUpvotes    AnswerUpvote[]
+  followers        UserFollow[] @relation("follower")
+  following        UserFollow[] @relation("following")
+  amaSessions      AMASession[]
+  amaQuestions     AMAQuestion[]
+  sentMessages     DirectMessage[] @relation("sender")
+  receivedMessages DirectMessage[] @relation("receiver")
+  conversations    ConversationParticipant[]
+
+  @@map("users")
+}
+
+model ClinicalLog {
+  id            String    @id @default(uuid())
+  userId        String
+  caseTitle     String
+  caseType      String
+  description   String
+  patientAge    Int?
+  patientGender String?
+  diagnosis     String?
+  intervention  String?
+  outcome       String?
+  supervisorName String?
+  supervisorApproval Boolean @default(false)
+  supervisorSignature String?
+  qrCode        String?
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("clinical_logs")
+}
+
+model MigrationProgress {
+  id                  String    @id @default(uuid())
+  userId              String    @unique
+  targetCountry       String    @default("USA")
+  
+  nclexStatus         String    @default("NOT_STARTED")
+  nclexDate           DateTime?
+  nclexScore          Int?
+  
+  ieltsStatus         String    @default("NOT_STARTED")
+  ieltsDate           DateTime?
+  ieltsScore          Float?
+  
+  oetStatus           String    @default("NOT_STARTED")
+  oetDate             DateTime?
+  oetScore            Float?
+  
+  credentialEvalStatus String   @default("NOT_STARTED")
+  credentialEvalDate   DateTime?
+  
+  visaStatus          String    @default("NOT_STARTED")
+  visaDate            DateTime?
+  
+  costEstimate        Float?
+  readinessScore      Int        @default(0)
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("migration_progress")
+}
+
+model ExamAttempt {
+  id            String    @id @default(uuid())
+  userId        String
+  examType      String
+  score         Float
+  totalQuestions Int
+  correctAnswers Int
+  timeSpent     Int
+  wrongAreas    String
+  passed        Boolean
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("exam_attempts")
+}
+
+model SalaryReport {
+  id              String    @id @default(uuid())
+  userId          String
+  hospitalName    String
+  country         String
+  city            String
+  department      String
+  shiftType       String
+  salaryMin       Int
+  salaryMax       Int
+  currency        String    @default("USD")
+  nurseToPatientRatio String?
+  benefits        String?
+  isAnonymous     Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("salary_reports")
+}
+
+model AdvocacyReport {
+  id            String    @id @default(uuid())
+  userId        String?
+  reportType    String
+  hospitalName  String
+  country       String
+  city          String
+  description   String
+  evidence      String?
+  isAnonymous   Boolean   @default(true)
+  status        String    @default("PENDING")
+  adminNotes    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("advocacy_reports")
+}
+
+model Subscription {
+  id            String    @id @default(uuid())
+  userId        String
+  plan          String
+  status        String    @default("ACTIVE")
+  startDate     DateTime
+  endDate       DateTime
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Institution {
+  id            String    @id @default(uuid())
+  name          String
+  type          String
+  country       String
+  city          String
+  website       String?
+  contactEmail  String?
+  isVerified   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("institutions")
+}
+
+model MarketplaceListing {
+  id            String    @id @default(uuid())
+  userId        String
+  serviceType   String
+  title         String
+  description   String
+  price         Float
+  currency      String    @default("USD")
+  country       String
+  city          String
+  isActive      Boolean   @default(true)
+  rating        Float     @default(0)
+  reviewCount   Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_listings")
+}
+
+model AuditLog {
+  id            String    @id @default(uuid())
+  userId        String?
+  action        String
+  entity        String
+  entityId      String?
+  details       String?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+
+  @@map("audit_logs")
+}
+
+model Job {
+  id              String    @id @default(uuid())
+  employerId      String
+  title           String
+  description     String
+  requirements    String
+  department      String
+  jobType         String
+  shiftType       String?
+  experienceLevel String
+  salaryMin       Int?
+  salaryMax       Int?
+  currency        String    @default("USD")
+  country         String
+  city            String
+  isRemote        Boolean   @default(false)
+  isActive        Boolean   @default(true)
+  viewCount       Int       @default(0)
+  applicationCount Int      @default(0)
+  expiresAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  employer        Employer  @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  applications    JobApplication[]
+
+  @@map("jobs")
+}
+
+model Employer {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  companyName   String
+  industry      String
+  companySize   String?
+  website       String?
+  description   String?
+  logo          String?
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs          Job[]
+
+  @@map("employers")
+}
+
+model JobApplication {
+  id            String    @id @default(uuid())
+  jobId         String
+  candidateId   String
+  coverLetter   String?
+  status        String    @default("PENDING")
+  notes         String?
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  job           Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate     User      @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@map("job_applications")
+}
+
+model Document {
+  id            String    @id @default(uuid())
+  userId        String
+  name          String
+  type          String
+  category      String
+  fileUrl       String
+  fileSize      Int?
+  mimeType      String?
+  expiresAt     DateTime?
+  isVerified    Boolean   @default(false)
+  verifiedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+model Notification {
+  id            String    @id @default(uuid())
+  userId        String
+  type          String
+  title         String
+  message       String
+  data          String?
+  isRead        Boolean   @default(false)
+  readAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AIGuidanceSession {
+  id            String    @id @default(uuid())
+  userId        String
+  agentType     String
+  query         String
+  response      String
+  context       String?
+  rating        Int?
+  feedback      String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_guidance_sessions")
+}
+
+model StudyActivity {
+  id            String    @id @default(uuid())
+  userId        String
+  activityType  String
+  duration      Int
+  metadata      String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("study_activities")
+}
+
+model Regulator {
+  id            String    @id @default(uuid())
+  name          String
+  slug          String    @unique
+  country       String
+  region        String?
+  logo          String?
+  website       String?
+  description   String?
+  contactEmail  String?
+  phone         String?
+  address       String?
+  isVerified    Boolean   @default(false)
+  verifiedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  users         RegulatorUser[]
+  announcements RegulatorAnnouncement[]
+  pathways      LicensingPathway[]
+  faqs          RegulatorFAQ[]
+  liveSessions  LiveQASession[]
+  analytics     RegulatorAnalytics[]
+  tracking      UserRegulatorTracking[]
+  questions     RegulatorQuestion[]
+
+  @@map("regulators")
+}
+
+model RegulatorUser {
+  id            String    @id @default(uuid())
+  regulatorId   String
+  userId        String
+  role          String    @default("STAFF")
+  name          String
+  title         String?
+  isPrimary     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  regulator     Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([regulatorId, userId])
+  @@map("regulator_users")
+}
+
+model RegulatorAnnouncement {
+  id            String    @id @default(uuid())
+  regulatorId   String
+  title         String
+  content       String
+  category      String    @default("LICENSING")
+  priority      String    @default("NORMAL")
+  isPinned      Boolean   @default(false)
+  isPublished   Boolean   @default(true)
+  publishedAt   DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  regulator     Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+
+  @@map("regulator_announcements")
+}
+
+model LicensingPathway {
+  id              String    @id @default(uuid())
+  regulatorId     String
+  country         String
+  pathwayType     String
+  title           String
+  description     String
+  eligibility     String
+  steps           String
+  documents       String
+  fees            String
+  timeline        String?
+  examRequired    Boolean   @default(false)
+  examName        String?
+  englishRequired Boolean   @default(false)
+  englishTests    String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  regulator       Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+
+  @@map("licensing_pathways")
+}
+
+model RegulatorFAQ {
+  id            String    @id @default(uuid())
+  regulatorId   String
+  question      String
+  answer        String
+  category      String?
+  isVerified    Boolean   @default(true)
+  isPublished   Boolean   @default(true)
+  upvotes       Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  regulator     Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+
+  @@map("regulator_faqs")
+}
+
+model LiveQASession {
+  id            String    @id @default(uuid())
+  regulatorId   String
+  title         String
+  description   String?
+  scheduledAt   DateTime
+  duration      Int       @default(60)
+  status        String    @default("SCHEDULED")
+  streamUrl     String?
+  isRecorded    Boolean   @default(true)
+  recordingUrl  String?
+  attendeeCount Int       @default(0)
+  createdAt     DateTime  @default(now())
+  endedAt       DateTime?
+
+  regulator     Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+  questions    LiveQAQuestion[]
+
+  @@map("live_qa_sessions")
+}
+
+model LiveQAQuestion {
+  id            String    @id @default(uuid())
+  sessionId     String
+  userId        String?
+  question      String
+  answer        String?
+  isAnswered    Boolean   @default(false)
+  upvotes       Int       @default(0)
+  createdAt     DateTime  @default(now())
+
+  session       LiveQASession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("live_qa_questions")
+}
+
+model RegulatorAnalytics {
+  id              String    @id @default(uuid())
+  regulatorId     String
+  period          String
+  date            DateTime
+
+  totalMigrations Int       @default(0)
+  examPassRate    Float?
+  avgProcessingDays Float?
+
+  activeNurses    Int       @default(0)
+  newApplications Int       @default(0)
+  jobPlacements   Int       @default(0)
+
+  profileViews    Int       @default(0)
+  pathwayViews    Int       @default(0)
+  faqViews        Int       @default(0)
+
+  createdAt       DateTime  @default(now())
+
+  regulator       Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+
+  @@map("regulator_analytics")
+}
+
+model UserRegulatorTracking {
+  id            String    @id @default(uuid())
+  userId        String
+  regulatorId   String
+  country       String
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  regulator     Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, regulatorId])
+  @@map("user_regulator_tracking")
+}
+
+model RegulatorQuestion {
+  id            String    @id @default(uuid())
+  userId        String?
+  regulatorId   String
+  question      String
+  status        String    @default("PENDING")
+  answer        String?
+  answeredAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  regulator     Regulator @relation(fields: [regulatorId], references: [id], onDelete: Cascade)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("regulator_questions")
+}
+
+model UserProfile {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  headline        String?
+  bio             String?
+  specialty       String?
+  experienceYears Int       @default(0)
+  currentRole     String?
+  currentHospital String?
+  country         String?
+  city            String?
+  isOpenToWork   Boolean   @default(true)
+  isHiring        Boolean   @default(false)
+  linkedIn        String?
+  twitter         String?
+  website         String?
+  reputationScore Int       @default(0)
+  expertLevel     String    @default("NEWCOMER")
+  postsCount      Int       @default(0)
+  answersCount    Int       @default(0)
+  helpfulCount    Int       @default(0)
+  followersCount  Int       @default(0)
+  followingCount  Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model Community {
+  id            String    @id @default(uuid())
+  name          String
+  slug          String    @unique
+  description   String
+  type          String
+  icon          String?
+  coverImage    String?
+  color         String    @default("#6366F1")
+  rules         String?
+  isPrivate     Boolean   @default(false)
+  isVerified    Boolean   @default(false)
+  membersCount  Int       @default(0)
+  postsCount    Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  posts         CommunityPost[]
+  members       CommunityMember[]
+
+  @@map("communities")
+}
+
+model CommunityMember {
+  id            String    @id @default(uuid())
+  communityId   String
+  userId        String
+  role          String    @default("MEMBER")
+  joinedAt      DateTime  @default(now())
+
+  community     Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, userId])
+  @@map("community_members")
+}
+
+model CommunityPost {
+  id            String    @id @default(uuid())
+  communityId   String
+  authorId      String
+  title         String
+  content       String
+  type          String
+  isPinned      Boolean   @default(false)
+  isLocked      Boolean   @default(false)
+  isAnswered    Boolean   @default(false)
+  viewsCount    Int       @default(0)
+  upvotesCount  Int       @default(0)
+  commentsCount Int       @default(0)
+  answersCount  Int       @default(0)
+  tags          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  community     Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments      CommunityComment[]
+  answers       ThreadAnswer[]
+  upvotes       PostUpvote[]
+
+  @@map("community_posts")
+}
+
+model CommunityComment {
+  id            String    @id @default(uuid())
+  postId        String
+  authorId      String
+  parentId      String?
+  content       String
+  upvotesCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  post          CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author        User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent        CommunityComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies       CommunityComment[] @relation("CommentReplies")
+
+  @@map("community_comments")
+}
+
+model ThreadAnswer {
+  id            String    @id @default(uuid())
+  postId        String
+  authorId      String
+  content       String
+  isAccepted    Boolean   @default(false)
+  upvotesCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  post          CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author        User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  upvotes       AnswerUpvote[]
+
+  @@map("thread_answers")
+}
+
+model PostUpvote {
+  id            String    @id @default(uuid())
+  postId        String
+  userId        String
+  createdAt     DateTime  @default(now())
+
+  post          CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("post_upvotes")
+}
+
+model AnswerUpvote {
+  id            String    @id @default(uuid())
+  answerId      String
+  userId        String
+  createdAt     DateTime  @default(now())
+
+  answer        ThreadAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([answerId, userId])
+  @@map("answer_upvotes")
+}
+
+model UserFollow {
+  id            String    @id @default(uuid())
+  followerId    String
+  followingId   String
+  createdAt     DateTime  @default(now())
+
+  follower      User      @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following     User      @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("user_follows")
+}
+
+model Badge {
+  id            String    @id @default(uuid())
+  name          String    @unique
+  description   String
+  icon          String
+  color         String
+  criteria      String
+  createdAt     DateTime  @default(now())
+
+  users         UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id            String    @id @default(uuid())
+  userId        String
+  badgeId       String
+  earnedAt      DateTime  @default(now())
+
+  badge         Badge     @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model AMASession {
+  id            String    @id @default(uuid())
+  recruiterId   String
+  hospitalName  String?
+  title         String
+  description   String
+  scheduledAt   DateTime
+  duration      Int       @default(60)
+  status        String    @default("SCHEDULED")
+  questionsCount Int      @default(0)
+  attendeesCount Int      @default(0)
+  createdAt     DateTime  @default(now())
+
+  recruiter     User      @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  questions    AMAQuestion[]
+
+  @@map("ama_sessions")
+}
+
+model AMAQuestion {
+  id            String    @id @default(uuid())
+  sessionId     String
+  userId        String
+  question      String
+  answer        String?
+  isAnswered    Boolean   @default(false)
+  upvotesCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+
+  session       AMASession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ama_questions")
+}
+
+model Conversation {
+  id            String    @id @default(uuid())
+  type          String    @default("DIRECT") // DIRECT, GROUP
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  participants  ConversationParticipant[]
+  messages      DirectMessage[]
+
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String    @id @default(uuid())
+  conversationId String
+  userId         String
+  role           String    @default("MEMBER") // MEMBER, ADMIN
+  joinedAt        DateTime  @default(now())
+  lastReadAt     DateTime  @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@map("conversation_participants")
+}
+
+model DirectMessage {
+  id             String    @id @default(uuid())
+  conversationId String
+  senderId       String
+  receiverId     String
+  content        String
+  isRead         Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver       User         @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@map("direct_messages")
+}
+
+model PostReport {
+  id            String    @id @default(uuid())
+  reporterId    String
+  postId        String
+  reason        String
+  status        String    @default("PENDING")
+  adminNote     String?
+  createdAt     DateTime  @default(now())
+  resolvedAt    DateTime?
+
+  @@map("post_reports")
+}
+
+model UserMute {
+  id            String    @id @default(uuid())
+  muterId       String
+  mutedId       String
+  reason        String?
+  createdAt     DateTime  @default(now())
+
+  @@unique([muterId, mutedId])
+  @@map("user_mutes")
+}
