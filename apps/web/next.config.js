@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@nursesphere/ui'],
   async rewrites() {
     const apiUrl = process.env.API_URL;
     if (!apiUrl) return [];
