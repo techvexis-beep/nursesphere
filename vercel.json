@@ -1,8 +1,7 @@
 {
   "framework": "nextjs",
   "rootDirectory": "apps/web",
-  "buildCommand": "cd ../.. && npx turbo build --filter=web...",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "cd ../.. && npm install",
-  "ignoreCommand": "cd ../.. && npx turbo-ignore"
+  "installCommand": "cd ../.. && npm install"
 }
