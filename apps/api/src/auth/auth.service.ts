@@ -89,6 +89,29 @@ export class AuthService {
     return user;
   }
 
+  async validateUserByEmail(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user || !user.isActive) {
+      return null;
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+    };
+  }
+
   private generateToken(userId: string, email: string) {
     return this.jwtService.sign({ sub: userId, email });
   }

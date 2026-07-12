@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { hashEmail } from '@/lib/crypto';
+import { createHash } from 'crypto';
+
+function hashEmail(email: string): string {
+  return createHash('sha256').update(email.toLowerCase()).digest('hex');
+}
+
+const verificationStore = new Map<string, { code: string; expiresAt: number }>();
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,52 +27,31 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedEmail = hashEmail(email);
-    
-    let verificationData = null;
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(`verify_${hashedEmail}`);
-      if (stored) {
-        verificationData = JSON.parse(stored);
-      }
-    }
+    const stored = verificationStore.get(hashedEmail);
 
-    if (!verificationData) {
-      const demoCode = request.headers.get('x-demo-code');
-      if (demoCode === code) {
-        return NextResponse.json({
-          success: true,
-          message: 'Email verified successfully',
-        });
-      }
-      
+    if (!stored) {
       return NextResponse.json(
         { error: 'Verification code not found. Please request a new code.' },
         { status: 400 }
       );
     }
 
-    if (verificationData.code !== code) {
+    if (stored.code !== code) {
       return NextResponse.json(
         { error: 'Invalid verification code' },
         { status: 400 }
       );
     }
 
-    const expiresAt = new Date(verificationData.expiresAt);
-    if (expiresAt < new Date()) {
+    if (Date.now() > stored.expiresAt) {
+      verificationStore.delete(hashedEmail);
       return NextResponse.json(
         { error: 'Verification code has expired. Please request a new one.' },
         { status: 400 }
       );
     }
 
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(`verify_${hashedEmail}`);
-      localStorage.setItem(`verified_${hashedEmail}`, JSON.stringify({
-        email,
-        verifiedAt: new Date().toISOString(),
-      }));
-    }
+    verificationStore.delete(hashedEmail);
 
     return NextResponse.json({
       success: true,

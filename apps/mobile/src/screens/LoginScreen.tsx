@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { api } from '../services/api';
+import api, { auth } from '../services/api';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      const response = await api.login(email, password);
+      const response = await auth.login(email, password);
       navigation.navigate('Dashboard' as never);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Login failed');

@@ -4,15 +4,18 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius, typography } from '../../src/constants/theme';
+import { auth } from '../../src/services/api';
 
 export default function RegisterScreen() {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    if (!name || !email || !password || !confirmPassword) {
+  const handleRegister = async () => {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -20,7 +23,33 @@ export default function RegisterScreen() {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-    router.replace('/(auth)/otp');
+    if (password.length < 8) {
+      Alert.alert('Error', 'Password must be at least 8 characters');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await auth.register({
+        email,
+        password,
+        firstName,
+        lastName,
+        role: 'NURSE_STUDENT',
+      });
+      await import('@react-native-async-storage/async-storage').then(({ default: AsyncStorage }) =>
+        Promise.all([
+          AsyncStorage.setItem('token', data.token),
+          AsyncStorage.setItem('user', JSON.stringify(data.user)),
+        ])
+      );
+      router.replace('/(auth)/otp');
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'Registration failed';
+      Alert.alert('Error', message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,16 +68,29 @@ export default function RegisterScreen() {
           </View>
 
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Full Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Sarah Johnson, RN"
-                placeholderTextColor={colors.textMuted}
-                value={name}
-                onChangeText={setName}
-                autoCapitalize="words"
-              />
+            <View style={styles.row}>
+              <View style={[styles.inputContainer, styles.halfInput]}>
+                <Text style={styles.inputLabel}>First Name</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="First name"
+                  placeholderTextColor={colors.textMuted}
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  autoCapitalize="words"
+                />
+              </View>
+              <View style={[styles.inputContainer, styles.halfInput]}>
+                <Text style={styles.inputLabel}>Last Name</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Last name"
+                  placeholderTextColor={colors.textMuted}
+                  value={lastName}
+                  onChangeText={setLastName}
+                  autoCapitalize="words"
+                />
+              </View>
             </View>
 
             <View style={styles.inputContainer}>
@@ -74,6 +116,7 @@ export default function RegisterScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
               />
+              <Text style={styles.hint}>Must be at least 8 characters</Text>
             </View>
 
             <View style={styles.inputContainer}>
@@ -96,14 +139,14 @@ export default function RegisterScreen() {
               </Text>
             </View>
 
-            <TouchableOpacity onPress={handleRegister}>
+            <TouchableOpacity onPress={handleRegister} disabled={loading}>
               <LinearGradient
                 colors={colors.gradient.primary as [string, string]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={styles.button}
+                style={[styles.button, loading && styles.buttonDisabled]}
               >
-                <Text style={styles.buttonText}>Create Account</Text>
+                <Text style={styles.buttonText}>{loading ? 'Creating Account...' : 'Create Account'}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -158,6 +201,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xl,
   },
+  row: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  halfInput: {
+    flex: 1,
+  },
   inputContainer: {
     marginBottom: spacing.lg,
   },
@@ -175,6 +225,11 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.text,
   },
+  hint: {
+    ...typography.bodySmall,
+    color: colors.textMuted,
+    marginTop: spacing.xs,
+  },
   termsContainer: {
     marginBottom: spacing.lg,
   },
@@ -191,6 +246,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     alignItems: 'center',
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   buttonText: {
     ...typography.body,

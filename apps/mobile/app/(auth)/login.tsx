@@ -4,18 +4,33 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius, typography } from '../../src/constants/theme';
+import { auth } from '../../src/services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-    router.replace('/(tabs)');
+
+    setLoading(true);
+    try {
+      const data = await auth.login(email, password);
+      await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('user', JSON.stringify(data.user));
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'Login failed';
+      Alert.alert('Error', message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,7 +42,7 @@ export default function LoginScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <Text style={styles.logo}>🩺</Text>
+              <Text style={styles.logo}>+</Text>
             </View>
             <Text style={styles.title}>Welcome Back</Text>
             <Text style={styles.subtitle}>Sign in to continue your nursing journey</Text>
@@ -62,7 +77,7 @@ export default function LoginScreen() {
                   style={styles.togglePassword}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Text style={styles.toggleText}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                  <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -74,14 +89,14 @@ export default function LoginScreen() {
               <Text style={styles.forgotText}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleLogin}>
+            <TouchableOpacity onPress={handleLogin} disabled={loading}>
               <LinearGradient
                 colors={colors.gradient.primary as [string, string]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={styles.button}
+                style={[styles.button, loading && styles.buttonDisabled]}
               >
-                <Text style={styles.buttonText}>Sign In</Text>
+                <Text style={styles.buttonText}>{loading ? 'Signing In...' : 'Sign In'}</Text>
               </LinearGradient>
             </TouchableOpacity>
 
@@ -182,7 +197,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   toggleText: {
-    fontSize: 18,
+    fontSize: 14,
+    color: colors.primary,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -197,6 +213,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     alignItems: 'center',
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   buttonText: {
     ...typography.body,

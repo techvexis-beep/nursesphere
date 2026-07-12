@@ -29,7 +29,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      await auth.register({ firstName, lastName, email, password });
+      await auth.register({ firstName, lastName, email, password, role: 'NURSE_STUDENT' });
       Alert.alert('Success', 'Account created successfully!', [
         { text: 'OK', onPress: () => navigation.navigate('Login' as never) }
       ]);

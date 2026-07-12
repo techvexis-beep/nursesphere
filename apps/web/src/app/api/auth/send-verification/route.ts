@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { hashEmail, generateVerificationCode } from '@/lib/crypto';
+import { createHash } from 'crypto';
+
+function hashEmail(email: string): string {
+  return createHash('sha256').update(email.toLowerCase()).digest('hex');
+}
+
+function generateVerificationCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+const verificationStore = new Map<string, { code: string; expiresAt: number }>();
 
 function getEmailConfig() {
   return {
@@ -36,29 +46,21 @@ export async function POST(request: NextRequest) {
     const code = generateVerificationCode();
     const hashedEmail = hashEmail(email);
 
-    const verificationData = {
+    verificationStore.set(hashedEmail, {
       code,
-      email: hashedEmail,
-      name,
-      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-      createdAt: new Date().toISOString(),
-    };
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(`verify_${hashedEmail}`, JSON.stringify(verificationData));
-    }
+      expiresAt: Date.now() + 15 * 60 * 1000,
+    });
 
     const config = getEmailConfig();
     
     if (!config.user || !config.pass || config.user === 'your-email@gmail.com') {
-      console.log('📧 EMAIL (Demo Mode - No SMTP Config)');
+      console.log('EMAIL (Demo Mode - No SMTP Config)');
       console.log('To:', email);
       console.log('Code:', code);
       
       return NextResponse.json({
         success: true,
         message: 'Verification code generated (demo mode)',
-        code: code,
       });
     }
 
@@ -74,11 +76,6 @@ export async function POST(request: NextRequest) {
         connectionTimeout: 15000,
         socketTimeout: 15000,
       });
-
-      console.log('📧 Attempting to send email...');
-      console.log('From:', config.from);
-      console.log('To:', email);
-      console.log('Code:', code);
 
       const htmlContent = `
         <!DOCTYPE html>
@@ -113,7 +110,7 @@ export async function POST(request: NextRequest) {
               <p class="code">${code}</p>
             </div>
             <div class="warning">
-              <p>⏱️ This code expires in 15 minutes</p>
+              <p>This code expires in 15 minutes</p>
             </div>
             <p style="font-size: 12px;">If you didn't create an account, you can safely ignore this email.</p>
             <div class="footer">
@@ -131,25 +128,19 @@ export async function POST(request: NextRequest) {
         html: htmlContent,
       });
 
-      console.log('✅ Verification email sent to:', email);
+      console.log('Verification email sent to:', email);
 
       return NextResponse.json({
         success: true,
         message: 'Verification code sent to your email',
-        code: code, // Always include for debugging
       });
 
     } catch (smtpError: any) {
-      console.error('❌ SMTP Error:', smtpError.message);
-      
-      console.log('📧 EMAIL (Fallback - SMTP Failed)');
-      console.log('To:', email);
-      console.log('Code:', code);
+      console.error('SMTP Error:', smtpError.message);
       
       return NextResponse.json({
         success: true,
         message: 'Verification code generated',
-        code: code, // Always include for debugging
         warning: 'Email service unavailable',
       });
     }

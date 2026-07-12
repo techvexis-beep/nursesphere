@@ -19,7 +19,7 @@ export class RegisterDto {
   phone?: string;
 
   @IsOptional()
-  @IsEnum(['ADMIN', 'NURSE_STUDENT', 'LICENSED_NURSE', 'MIGRATING_NURSE', 'NURSE_ADVOCATE', 'INSTITUTION'])
+  @IsEnum(['ADMIN', 'NURSE_STUDENT', 'LICENSED_NURSE', 'MIGRATING_NURSE', 'NURSE_ADVOCATE', 'REGULATORY_BODY', 'INSTITUTION'])
   role?: string;
 }
 

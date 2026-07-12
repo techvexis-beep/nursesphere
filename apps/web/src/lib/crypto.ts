@@ -1,5 +1,3 @@
-'use client';
-
 import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 
 const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'nursphere_secure_key_2024_v1';
