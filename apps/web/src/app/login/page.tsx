@@ -33,42 +33,21 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setToken(data.token);
-        setUserContext(data.user);
-        router.push('/dashboard');
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Invalid email or password');
+        setLoading(false);
         return;
       }
 
-      const errorData = await res.json().catch(() => ({}));
-      setError(errorData.message || 'Invalid email or password');
-    } catch {
-      const demoToken = 'demo_token_' + Date.now();
-      const demoUser = {
-        id: 'demo_' + Date.now(),
-        email: email,
-        name: email.split('@')[0],
-        role: 'NURSE_STUDENT' as UserRole,
-        createdAt: new Date().toISOString(),
-        verificationStatus: 'unverified' as const,
-        isEmailVerified: false,
-        hasCompletedOnboarding: false,
-        securityLevel: 1,
-        betaFeatures: ['ai_tutor', 'gamification'],
-        unreadNotifications: 0,
-        achievements: [],
-        level: 1,
-        xp: 0,
-        streak: 0,
-      };
-      localStorage.setItem('token', demoToken);
-      localStorage.setItem('user', JSON.stringify(demoUser));
-      setToken(demoToken);
-      setUserContext(demoUser);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setToken(data.token);
+      setUserContext(data.user);
       router.push('/dashboard');
+    } catch {
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
