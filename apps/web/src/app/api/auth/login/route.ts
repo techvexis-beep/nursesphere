@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: 'Internal server error',
-        ...(process.env.NODE_ENV !== 'production' && { detail: error?.message }),
+        detail: error?.message,
       },
       { status: 500 }
     );
