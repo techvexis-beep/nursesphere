@@ -57,12 +57,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Login error:', error);
+    let rawBody = '';
+    try { rawBody = await (error as any)?.request?.text?.() || ''; } catch {}
     return NextResponse.json(
       {
         message: 'Login failed',
         detail: error?.message,
         name: error?.name,
-        stack: error?.stack,
       },
       { status: 500 }
     );
