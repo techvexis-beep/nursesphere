@@ -450,7 +450,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: user.email,
-          name: user.name,
+          name: user.firstName || user.name || 'User',
         }),
       });
 
