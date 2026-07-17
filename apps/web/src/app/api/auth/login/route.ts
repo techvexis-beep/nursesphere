@@ -7,7 +7,11 @@ const JWT_SECRET = process.env.JWT_SECRET || 'nursesphere-jwt-secret';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json() as any;
+    const rawBody = await request.text();
+    const emailMatch = rawBody.match(/"email"\s*:\s*"([^"]+)"/);
+    const passwordMatch = rawBody.match(/"password"\s*:\s*"([^"]+)"/);
+    const email = emailMatch?.[1];
+    const password = passwordMatch?.[1];
 
     if (!email || !password) {
       return NextResponse.json(
