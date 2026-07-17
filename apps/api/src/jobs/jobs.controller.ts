@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request, Inject, NotFoundException, ForbiddenException, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Request, ForbiddenException, Headers } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto, ApplyJobDto, ExternalJobQueryDto } from './dto/jobs.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,45 +21,45 @@ export class JobsController {
   }
 
   @Post()
-  async createJob(@Request() req, @Body() dto: CreateJobDto) {
+  async createJob(@Request() req: any, @Body() dto: CreateJobDto) {
     return this.jobsService.createJob(req.user?.id || 'demo-user-id', dto);
   }
 
   @Put(':id')
-  async updateJob(@Request() req, @Param('id') id: string, @Body() dto: UpdateJobDto) {
+  async updateJob(@Request() req: any, @Param('id') id: string, @Body() dto: UpdateJobDto) {
     const employer = await this.prisma.employer.findUnique({ where: { userId: req.user?.id || 'demo-user-id' } });
     if (!employer) throw new ForbiddenException('Only employers can post jobs');
     return this.jobsService.updateJob(id, employer.id, dto);
   }
 
   @Delete(':id')
-  async deleteJob(@Request() req, @Param('id') id: string) {
+  async deleteJob(@Request() req: any, @Param('id') id: string) {
     const employer = await this.prisma.employer.findUnique({ where: { userId: req.user?.id || 'demo-user-id' } });
     if (!employer) throw new ForbiddenException('Only employers can delete jobs');
     return this.jobsService.deleteJob(id, employer.id);
   }
 
   @Post(':id/apply')
-  async applyForJob(@Request() req, @Param('id') id: string, @Body() dto: ApplyJobDto) {
+  async applyForJob(@Request() req: any, @Param('id') id: string, @Body() dto: ApplyJobDto) {
     return this.jobsService.applyForJob(id, req.user?.id || 'demo-user-id', dto);
   }
 
   @Get('employer/my-jobs')
-  async getEmployerJobs(@Request() req) {
+  async getEmployerJobs(@Request() req: any) {
     const employer = await this.prisma.employer.findUnique({ where: { userId: req.user?.id || 'demo-user-id' } });
     if (!employer) return [];
     return this.jobsService.getEmployerJobs(employer.id);
   }
 
   @Get('employer/stats')
-  async getEmployerStats(@Request() req) {
+  async getEmployerStats(@Request() req: any) {
     const employer = await this.prisma.employer.findUnique({ where: { userId: req.user?.id || 'demo-user-id' } });
     if (!employer) return { totalJobs: 0, activeJobs: 0, totalViews: 0, totalApplications: 0, jobs: [] };
     return this.jobsService.getJobStats(employer.id);
   }
 
   @Get(':id/applications')
-  async getJobApplications(@Request() req, @Param('id') id: string) {
+  async getJobApplications(@Request() req: any, @Param('id') id: string) {
     const employer = await this.prisma.employer.findUnique({ where: { userId: req.user?.id || 'demo-user-id' } });
     if (!employer) throw new ForbiddenException('Only employers can view applications');
     return this.jobsService.getJobApplications(id, employer.id);
@@ -67,7 +67,7 @@ export class JobsController {
 
   @Put('applications/:applicationId/status')
   async updateApplicationStatus(
-    @Request() req,
+    @Request() req: any,
     @Param('applicationId') applicationId: string,
     @Body('status') status: string,
     @Body('notes') notes?: string,
@@ -78,7 +78,7 @@ export class JobsController {
   }
 
   @Get('candidate/my-applications')
-  async getCandidateApplications(@Request() req) {
+  async getCandidateApplications(@Request() req: any) {
     return this.jobsService.getCandidateApplications(req.user?.id || 'demo-user-id');
   }
 

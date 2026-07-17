@@ -2,8 +2,25 @@
   "name": "nursesphere",
   "private": true,
   "scripts": {
-    "dev:web": "cd apps/web && npm run dev",
-    "dev:api": "cd apps/api && npm run start:dev",
-    "build:web": "cd apps/web && npm run build"
+    "dev:web": "npm run dev --prefix apps/web",
+    "dev:api": "npm run start:dev --prefix apps/api",
+    "dev:mobile": "npm run start --prefix apps/mobile",
+    "build:web": "npm run build --prefix apps/web",
+    "build:api": "npm run build --prefix apps/api",
+    "lint:web": "npm run lint --prefix apps/web",
+    "lint:api": "npm run lint --prefix apps/api",
+    "lint:mobile": "npm run lint --prefix apps/mobile",
+    "lint": "npm run lint:web && npm run lint:api && npm run lint:mobile",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .prettierignore",
+    "typecheck:web": "tsc --noEmit --project apps/web/tsconfig.json",
+    "typecheck:api": "tsc --noEmit --project apps/api/tsconfig.json",
+    "prisma:generate": "npm run prisma:generate --prefix apps/api",
+    "prisma:migrate": "npm run prisma:migrate --prefix apps/api",
+    "prisma:studio": "npm run prisma:studio --prefix apps/api",
+    "clean": "rm -rf apps/web/.next apps/api/dist apps/mobile/.expo packages/*/dist .turbo"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

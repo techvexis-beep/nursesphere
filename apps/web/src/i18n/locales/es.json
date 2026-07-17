@@ -1,0 +1,111 @@
+{
+  "common": {
+    "appName": "NurseSphere",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "retry": "Intentar de nuevo",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "submit": "Enviar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "search": "Buscar",
+    "noResults": "No se encontraron resultados",
+    "learnMore": "Más información",
+    "getStarted": "Comenzar",
+    "viewAll": "Ver todo"
+  },
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "exams": "Preparación NCLEX",
+    "migration": "Migración",
+    "jobs": "Empleos",
+    "community": "Comunidad",
+    "messages": "Mensajes",
+    "settings": "Configuración",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión"
+  },
+  "auth": {
+    "loginTitle": "Bienvenido de nuevo",
+    "loginSubtitle": "Inicia sesión en tu cuenta",
+    "registerTitle": "Crea tu cuenta",
+    "registerSubtitle": "Únete a más de 50,000 enfermeras en todo el mundo",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "createAccount": "Crear cuenta",
+    "loginButton": "Iniciar sesión"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido, {{name}}",
+    "todayFocus": "Enfoque de hoy",
+    "quickActions": "Acciones rápidas",
+    "recentActivity": "Actividad reciente",
+    "aiInsights": "Perspectivas de IA",
+    "migrationProgress": "Progreso de migración",
+    "examScore": "Calificación del examen"
+  },
+  "migration": {
+    "title": "Rastreador de Migración",
+    "subtitle": "Seguimiento de tu progreso hacia tu destino soñado",
+    "nclex": "NCLEX",
+    "ielts": "IELTS",
+    "oet": "OET",
+    "visa": "Visa",
+    "credentialEval": "Evaluación de credenciales",
+    "notStarted": "No iniciado",
+    "inProgress": "En progreso",
+    "completed": "Completado",
+    "readinessScore": "Puntuación de preparación",
+    "costEstimate": "Costo estimado"
+  },
+  "exams": {
+    "title": "Plataforma de Exámenes CBT",
+    "subtitle": "Practica y domina tus exámenes de enfermería",
+    "startExam": "Iniciar examen",
+    "submitExam": "Enviar examen",
+    "questionCount": "{{current}} de {{total}}",
+    "timeRemaining": "Tiempo restante",
+    "score": "Tu puntuación",
+    "passed": "Aprobado",
+    "failed": "Reprobado",
+    "weakAreas": "Áreas débiles identificadas"
+  },
+  "jobs": {
+    "title": "Portal de Empleos",
+    "subtitle": "Encuentra tu posición soñada en enfermería",
+    "searchJobs": "Buscar empleos...",
+    "filterByCountry": "Filtrar por país",
+    "visaSponsorship": "Patrocinio de visa",
+    "remote": "Remoto",
+    "applyNow": "Aplicar ahora",
+    "salaryRange": "Rango salarial",
+    "experience": "Nivel de experiencia"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "editProfile": "Editar perfil",
+    "specialty": "Especialidad",
+    "experience": "Experiencia",
+    "location": "Ubicación",
+    "bio": "Biografía",
+    "reputation": "Reputación",
+    "badges": "Insignias"
+  },
+  "legal": {
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "security": "Seguridad",
+    "hipaa": "HIPAA"
+  }
+}

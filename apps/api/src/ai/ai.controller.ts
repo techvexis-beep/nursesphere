@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Request } from '@nestjs/common';
 import { AiService } from './ai.service';
 
 @Controller('ai')
@@ -6,29 +6,29 @@ export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Get('migration/:country')
-  async getMigrationGuidance(@Request() req, @Param('country') country: string) {
+  async getMigrationGuidance(@Request() req: any, @Param('country') country: string) {
     return this.aiService.getMigrationGuidance(req.user?.id || 'demo-user-id', country);
   }
 
   @Post('chat')
-  async chat(@Request() req, @Body() body: { message: string; context?: string }) {
+  async chat(@Request() req: any, @Body() body: { message: string; context?: string }) {
     const { message, context } = body;
     return this.aiService.chatWithAI(req.user?.id || 'demo-user-id', message, context);
   }
 
   @Post('career/chat')
-  async getCareerGuidance(@Request() req, @Body('query') query: string) {
+  async getCareerGuidance(@Request() req: any, @Body('query') query: string) {
     return this.aiService.getCareerGuidance(req.user?.id || 'demo-user-id', query);
   }
 
   @Get('churn/predict')
-  async getChurnPrediction(@Request() req) {
+  async getChurnPrediction(@Request() req: any) {
     return this.aiService.getChurnPrediction(req.user?.id || 'demo-user-id');
   }
 
   @Post('activity')
   async logStudyActivity(
-    @Request() req,
+    @Request() req: any,
     @Body('activityType') activityType: string,
     @Body('duration') duration: number,
     @Body('metadata') metadata?: any,

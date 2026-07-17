@@ -19,6 +19,7 @@ import { ProfileModule } from './profile/profile.module';
 import { ReputationModule } from './reputation/reputation.module';
 import { AMAModule } from './ama/ama.module';
 import { MessagesModule } from './messages/messages.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MessagesModule } from './messages/messages.module';
       envFilePath: '.env',
     }),
     PrismaModule,
+    HealthModule,
     AuthModule,
     UsersModule,
     MigrationModule,

@@ -1,0 +1,111 @@
+{
+  "common": {
+    "appName": "NurseSphere",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search",
+    "noResults": "No results found",
+    "learnMore": "Learn more",
+    "getStarted": "Get started",
+    "viewAll": "View all"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "exams": "NCLEX Prep",
+    "migration": "Migration",
+    "jobs": "Jobs",
+    "community": "Community",
+    "messages": "Messages",
+    "settings": "Settings",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to your account",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Join 50,000+ nurses worldwide",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "createAccount": "Create account",
+    "loginButton": "Sign in"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "todayFocus": "Today's Focus",
+    "quickActions": "Quick Actions",
+    "recentActivity": "Recent Activity",
+    "aiInsights": "AI Insights",
+    "migrationProgress": "Migration Progress",
+    "examScore": "Exam Score"
+  },
+  "migration": {
+    "title": "Migration Tracker",
+    "subtitle": "Track your progress toward your dream destination",
+    "nclex": "NCLEX",
+    "ielts": "IELTS",
+    "oet": "OET",
+    "visa": "Visa",
+    "credentialEval": "Credential Evaluation",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "readinessScore": "Readiness Score",
+    "costEstimate": "Estimated Cost"
+  },
+  "exams": {
+    "title": "CBT Exam Platform",
+    "subtitle": "Practice and master your nursing exams",
+    "startExam": "Start Exam",
+    "submitExam": "Submit Exam",
+    "questionCount": "{{current}} of {{total}}",
+    "timeRemaining": "Time remaining",
+    "score": "Your score",
+    "passed": "Passed",
+    "failed": "Failed",
+    "weakAreas": "Weak areas identified"
+  },
+  "jobs": {
+    "title": "Job Board",
+    "subtitle": "Find your dream nursing position",
+    "searchJobs": "Search jobs...",
+    "filterByCountry": "Filter by country",
+    "visaSponsorship": "Visa sponsorship",
+    "remote": "Remote",
+    "applyNow": "Apply now",
+    "salaryRange": "Salary range",
+    "experience": "Experience level"
+  },
+  "profile": {
+    "title": "My Profile",
+    "editProfile": "Edit profile",
+    "specialty": "Specialty",
+    "experience": "Experience",
+    "location": "Location",
+    "bio": "Bio",
+    "reputation": "Reputation",
+    "badges": "Badges"
+  },
+  "legal": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "security": "Security",
+    "hipaa": "HIPAA"
+  }
+}

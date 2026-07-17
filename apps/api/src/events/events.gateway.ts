@@ -58,7 +58,7 @@ export class EventsGateway
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.log('Authentication failed:', error.message);
+      console.log('Authentication failed:', (error as Error).message);
       client.disconnect();
     }
   }

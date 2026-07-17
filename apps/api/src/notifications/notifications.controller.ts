@@ -6,37 +6,37 @@ export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get()
-  async getNotifications(@Request() req, @Query('unread') unreadOnly?: string) {
+  async getNotifications(@Request() req: any, @Query('unread') unreadOnly?: string) {
     return this.notificationsService.getUserNotifications(req.user?.id || 'demo-user-id', unreadOnly === 'true');
   }
 
   @Get('unread-count')
-  async getUnreadCount(@Request() req) {
+  async getUnreadCount(@Request() req: any) {
     return this.notificationsService.getUnreadCount(req.user?.id || 'demo-user-id');
   }
 
   @Get('preferences')
-  async getPreferences(@Request() req) {
+  async getPreferences(@Request() req: any) {
     return this.notificationsService.getNotificationPreferences(req.user?.id || 'demo-user-id');
   }
 
   @Put('preferences')
-  async updatePreferences(@Request() req, @Body() preferences: any) {
+  async updatePreferences(@Request() req: any, @Body() preferences: any) {
     return this.notificationsService.updateNotificationPreferences(req.user?.id || 'demo-user-id', preferences);
   }
 
   @Put('read-all')
-  async markAllAsRead(@Request() req) {
+  async markAllAsRead(@Request() req: any) {
     return this.notificationsService.markAllAsRead(req.user?.id || 'demo-user-id');
   }
 
   @Put(':id/read')
-  async markAsRead(@Request() req, @Param('id') id: string) {
+  async markAsRead(@Request() req: any, @Param('id') id: string) {
     return this.notificationsService.markAsRead(id, req.user?.id || 'demo-user-id');
   }
 
   @Delete(':id')
-  async deleteNotification(@Request() req, @Param('id') id: string) {
+  async deleteNotification(@Request() req: any, @Param('id') id: string) {
     return this.notificationsService.deleteNotification(id, req.user?.id || 'demo-user-id');
   }
 

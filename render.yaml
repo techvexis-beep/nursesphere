@@ -1,0 +1,39 @@
+services:
+  # ── API Service ──────────────────────────────
+  - type: web
+    name: nursesphere-api
+    runtime: node
+    plan: starter
+    rootDir: apps/api
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      - key: PORT
+        value: 10000
+
+  # ── PostgreSQL Database ──────────────────────
+  - type: pgsql
+    name: nursesphere-db
+    plan: starter
+    databaseName: nursesphere
+    ipAllowList: []
+
+  # ── Redis Cache ──────────────────────────────
+  - type: redis
+    name: nursesphere-redis
+    plan: starter
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
