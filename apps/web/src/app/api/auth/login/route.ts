@@ -7,11 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'nursesphere-jwt-secret';
 
 export async function POST(request: NextRequest) {
   try {
-    const rawBody = await request.text();
-    const emailMatch = rawBody.match(/"email"\s*:\s*"([^"]+)"/);
-    const passwordMatch = rawBody.match(/"password"\s*:\s*"([^"]+)"/);
-    const email = emailMatch?.[1];
-    const password = passwordMatch?.[1];
+    const { email, password } = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -57,14 +53,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Login error:', error);
-    let rawBody = '';
-    try { rawBody = await (error as any)?.request?.text?.() || ''; } catch {}
     return NextResponse.json(
-      {
-        message: 'Login failed',
-        detail: error?.message,
-        name: error?.name,
-      },
+      { message: error?.message || 'Internal server error' },
       { status: 500 }
     );
   }
